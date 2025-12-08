@@ -82,13 +82,58 @@ public class FracCalc {
    //        1
    //        2 1/8
    //        2 1/4
-   public static String processExpression(String input) {
-      // TODO: implement this method!
-      return input;
-        //return "reduced result of expression";
 
+   
+   public static String processExpression(String input) {
+      Scanner parser = new Scanner(input);
+      String firstNum = parser.next(); //takes first token
+      String operator = parser.next(); //takes second token (always the operator)
+      String secondNum = parser.next();//takes third token, what is being parsed
+      String wholeNum = secondNum; //value of whole number, turns to zero if there is a fraction
+      String frac = secondNum;
+
+      if(secondNum.contains("/")){ //if secondNum is a fraction....
+         wholeNum = "0"; //wholeNum will always be 0 if this is true as shown in directions
+
+         if(secondNum.contains("_")){ //need to account for mixed numbers
+            //if its a mixed number, the whole number is the one before the underscore
+            wholeNum = secondNum.substring(0, secondNum.indexOf("_")); //sets wholeNum to from 0 to everything before _
+            frac = secondNum.substring(secondNum.indexOf("_") + 1); // takes everything after _ + 1 since the start is inclusive, and we dont want the _ in our string
+         }
+         //in a mixed number scenario, frac is now parsed into everything after the underscore
+         //whole number is now parsed into everything before the underscore
+
+         String numerator = processNumerator(frac); //set the final value of numerator to numerator of frac
+         String denominator = processDenominator(frac); //set the final value of denominator to denominator of frac
+
+         //this if statement handles the case if both the num and den are negative, since that would end up being positive
+         if(numerator.contains("-") && denominator.contains("-")){
+            numerator = numerator.substring(1); //simply changes the string into everything after the negative making it "positive"
+            denominator = denominator.substring(1); //^^
+         }
+         input = "Op:" + operator + " Whole:" + wholeNum + " Num:" + numerator + " Den:" + denominator; //changes the final value of input if secondNum is a fraction
+         return input; //returns input!
+      }
+
+      //this whole if statement is ignored if secondNum does not have a slash.
+      //the input value below is set if there is no slash in the second token
+      //num and den are set as the directions in CP2 say
+      input = "Op:" + operator + " Whole:" + wholeNum + " Num:0" + " Den:1"; 
+      return input;
+   }
+
+   public static String processNumerator(String num){
+      num = num.substring(0, num.indexOf('/')); //takes everything before the /, aka the numerator!
+      return num;
+   }
+
+   public static String processDenominator(String den){
+      den = den.substring(den.indexOf("/") + 1); //takes everything before the /, aka the denominator
+      return den;
    }
    
+
+
    // Returns a string that is helpful to the user about how
    // to use the program. These are instructions to the user.
    public static String provideHelp() {
